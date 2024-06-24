@@ -1,0 +1,48 @@
+#MINE0 - summary_traffic_gx
+{spminer_section_name}.MINE0_OFF=0
+##0=No_CACHE 1=MEMORY_ONLY 2=MEMORY_ONLY_SER 3=MEMORY_AND_DISK 4=MEMORY_AND_DISK_SER##
+{spminer_section_name}.MINE0_CACHE_LEVEL=0
+##OPTIMIZER FLAG 0=DISABLE 1=ENABLE
+{spminer_section_name}.MINE0_OPTIMIZER_ENABLE=1
+##RECOMEND MULTIPLE OF NUMBER OF CORE PER EXECUTOR
+{spminer_section_name}.MINE0_MIN_PARTITIONS=20
+
+{spminer_section_name}.MINE0_INTERVAL_S=60
+{spminer_section_name}.MINE0_START_TIME=0000
+{spminer_section_name}.MINE0_SLEEP_START_TIME=0000
+{spminer_section_name}.MINE0_SLEEP_END_TIME=0000
+
+{spminer_section_name}.MINE0_SRC_MINELOG_DATA_NAME=summary_traffic_gx
+{spminer_section_name}.MINE0_SRC_MINELOG_GRAN=dd
+
+{spminer_section_name}.MINE0_SRC_SPDATA_ID=0
+
+{spminer_section_name}.MINE0_SRC_MINELOG_BASEDT=unix_timestamp(log_datetime) * 1000
+{spminer_section_name}.MINE0_SRC_FILTER=
+{spminer_section_name}.MINE0_SRC_TRANSFORM= *, tx_year as par_year, ((YEAR(tx_date) * 100) + MONTH(tx_date)) as par_month, ((YEAR(tx_date) * 10000) + (MONTH(tx_date) * 100) + DAYOFMONTH(tx_date)) AS par_date
+
+## Use datetime from minelog as destination column for <SRC_TABLE> 0=OFF 1=ON ##
+##Destitnation tx_time column and par_dt is hardcoded if 1##
+{spminer_section_name}.MINE0_SRC_MINELOG_TO_DEST=0
+
+#HADOOP OR MYSQL
+{spminer_section_name}.MINE0_DEST_TYPE=MYSQL
+
+{spminer_section_name}.MINE0_TOTAL_DEST=1
+{spminer_section_name}.MINE0_DEST0_OFF=0
+
+// Destination 0 - summary_traffic_gx
+## Must select from <SRC_TABLE>. Final SQL to run after filtering -> transforming -> grouping
+{spminer_section_name}.MINE0_DEST0_SQL_FINAL=SELECT concat(tx_date, ' ', LPAD(cast(tx_hour as string), 2,'0'), ':00:00') AS tx_date_hour, instance_id, SUM(IF(request_type = 1, total_count, 0)) AS initial_request_count, SUM(IF(request_type = 2, total_count, 0)) AS update_request_count, SUM(IF(request_type = 3, total_count, 0)) AS terminate_request_count, SUM(IF(request_type = 4, total_count, 0)) AS event_request_count FROM <SRC_TABLE> GROUP BY tx_date_hour, instance_id
+
+
+{spminer_section_name}.MINE0_DEST0_TABLE=summary_traffic_gx
+{spminer_section_name}.MINE0_DEST0_COLUMN=*
+
+{spminer_section_name}.MINE0_DEST0_DUPLICATE_KEY_UPDATE=initial_request_count = VALUES(initial_request_count), update_request_count = VALUES(update_request_count), terminate_request_count = VALUES(terminate_request_count), event_request_count = VALUES(event_request_count), updated_at = current_timestamp()
+
+## FOR HADOOP partition
+{spminer_section_name}.MINE0_DEST0_PARTITION_COLUMN=par_year,par_month,par_date
+
+// Total grouping layer
+{spminer_section_name}.MINE0_DEST0_TOTAL_GF=0

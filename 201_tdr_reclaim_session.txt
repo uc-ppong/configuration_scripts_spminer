@@ -1,0 +1,41 @@
+
+##MINE0 - data_tdr_reclaim_session
+{spingest_section_name}.MINE0_OFF=0
+{spingest_section_name}.MINE0_INTERVAL_S=30
+{spingest_section_name}.MINE0_START_TIME=0000
+{spingest_section_name}.MINE0_SLEEP_START_TIME=0000
+{spingest_section_name}.MINE0_SLEEP_END_TIME=0000
+{spingest_section_name}.MINE0_MAX_PROCESS_FILE=50
+{spingest_section_name}.MINE0_FILE_DELIMITER=|
+{spingest_section_name}.MINE0_FILE_LINE_COUNT=1
+{spingest_section_name}.MINE0_SKIP_FIRST_ROW=0
+{spingest_section_name}.MINE0_END_WITH_DELIMITER=0
+
+{spingest_section_name}.MINE0_SRC_FILE_PATH=file:///unified/extfile/mocn_gx_report/4.preprocess/tdr_reclaim_session
+{spingest_section_name}.MINE0_SRC_FILE_PREFIX=tdr-reclaimSession
+{spingest_section_name}.MINE0_SRC_FILE_SUFFIX=.txt
+{spingest_section_name}.MINE0_SRC_FILE_PROCESS_PATH=file:///unified/extfile/mocn_gx_report/5.process/tdr_reclaim_session
+{spingest_section_name}.MINE0_SRC_FILE_BK_PATH=file:///unified/extfile/mocn_gx_report/6.bk/tdr_reclaim_session
+{spingest_section_name}.MINE0_SRC_FILE_FAIL_PATH=file:///unified/extfile/mocn_gx_report/7.fail/tdr_reclaim_session
+{spingest_section_name}.MINE0_SRC_SCHEMA_HIVE=data_tdr_reclaim_session_raw
+{spingest_section_name}.MINE0_ENCODING=UTF-8
+{spingest_section_name}.MINE0_TOTAL_DEST=1
+
+{spingest_section_name}.MINE0_DEST0_OFF=0
+{spingest_section_name}.MINE0_DEST0_PERSIST=MEMORY_AND_DISK
+
+{spingest_section_name}.MINE0_DEST0_INGEST_PATH=hdfs:///tmp/mocn_gx_report/data/ingest/data_tdr_reclaim_session_raw
+{spingest_section_name}.MINE0_DEST0_SPDATA_ID=3
+{spingest_section_name}.MINE0_DEST0_SQL=SELECT YEAR(to_timestamp(session_time, 'yyyy-MM-dd HH:mm:ss')) as par_year, CAST(DATE_FORMAT(to_timestamp(session_time, 'yyyy-MM-dd HH:mm:ss'), 'yyyyMM') AS INT) AS par_month, CAST(REPLACE(to_date(to_timestamp(session_time, 'yyyy-MM-dd HH:mm:ss')),'-','') as int) AS par_date, YEAR(to_timestamp(session_time, 'yyyy-MM-dd HH:mm:ss')) AS tx_year, QUARTER(to_timestamp(session_time, 'yyyy-MM-dd HH:mm:ss')) AS tx_qy, MONTH(to_timestamp(session_time, 'yyyy-MM-dd HH:mm:ss')) AS tx_month, WEEK(to_timestamp(session_time, 'yyyy-MM-dd HH:mm:ss')) AS tx_week, CAST(TO_DATE(to_timestamp(session_time, 'yyyy-MM-dd HH:mm:ss')) as string) AS tx_date, HOUR(to_timestamp(session_time, 'yyyy-MM-dd HH:mm:ss')) AS tx_hour, * FROM <SRC_TABLE>
+{spingest_section_name}.MINE0_DEST0_EXCLUDE_COLUMN=^positional_tag_.*, tdr_type
+{spingest_section_name}.MINE0_DEST0_MINELOG_BASEDT=session_time
+{spingest_section_name}.MINE0_DEST0_TOTAL_MINELOG=4
+{spingest_section_name}.MINE0_DEST0_MINELOG0_DATA_NAME=summary_mocn_unique_subs_gx_3
+{spingest_section_name}.MINE0_DEST0_MINELOG0_GRAN=dd
+{spingest_section_name}.MINE0_DEST0_MINELOG1_DATA_NAME=summary_mocn_unique_subs_gx_3
+{spingest_section_name}.MINE0_DEST0_MINELOG1_GRAN=mm
+{spingest_section_name}.MINE0_DEST0_MINELOG2_DATA_NAME=summary_mocn_cell_3
+{spingest_section_name}.MINE0_DEST0_MINELOG2_GRAN=dd
+{spingest_section_name}.MINE0_DEST0_MINELOG3_DATA_NAME=summary_mocn_cell_3
+{spingest_section_name}.MINE0_DEST0_MINELOG3_GRAN=mm
+
