@@ -60,9 +60,14 @@ def replace_miner_placeholders(spminer_section_name, total_miner):
             file_content = file_content.replace('{spminer_section_name}', spminer_section_name)
             file_content = file_content.replace('MINE0', f'MINE{idx}')
             output_content += '\n' + file_content
-    
+
+    # Read the contents of 03_SPMINER_HEADER.txt
+    with open('400_SPMERGE.txt', 'r') as spmerge_file:
+        merge_content = spmerge_file.read()
+        output_content += '\n' + merge_content
+
     # Write to the output file
-    with open('simplified_output.txt', 'w') as output_file:
+    with open('mocn_gx_report.properties', 'w') as output_file:
         output_file.write(output_content)
 
 def count_files_with_prefix(directory, prefix):
@@ -89,4 +94,5 @@ if __name__ == '__main__':
     total_miner = count_files_with_prefix(directory, prefix)
     replace_miner_placeholders(spminer_section_name, total_miner)
 
-    print(f"Output written to simplified_output.txt with section name '{spingest_section_name}' and total ingest '{total_ingest}'")
+    print(f"Output written to mocn_gx_report.properties with section name '{spingest_section_name}' and total ingest '{total_ingest}'")
+    print(f"Output written to mocn_gx_report.properties with section name '{spminer_section_name}' and total miner '{total_miner}'")
