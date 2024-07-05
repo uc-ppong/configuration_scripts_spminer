@@ -1,25 +1,30 @@
 import os
 import sys
+import re
 
 def replace_placeholders(spingest_section_name, total_ingest):
     # Read the contents of 00_SYSTEM_SPDATA.txt
     with open('00_SYSTEM_SPDATA.txt', 'r') as system_file:
         system_content = system_file.read()
-    
+
     # Read the contents of 01_SPINGEST_HEADER.txt
     with open('01_SPINGEST_HEADER.txt', 'r') as template_file:
         template_content = template_file.read()
-    
+
     # Replace placeholders in the template content
     template_content = template_content.replace('{spingest_section_name}', spingest_section_name)
     template_content = template_content.replace('{total_ingest}', str(total_ingest))
-    
+
     # Combine the contents
     output_content = system_content + '\n' + template_content
+
+    # Sort the filenames that start with '2' followed by two digits and then any characters
+    pattern = re.compile(r'^2\d{2}.*')
+    sorted_files = sorted([f for f in os.listdir('.') if pattern.match(f)])
     
-    # Sort the filenames that start with '2'
-    sorted_files = sorted([f for f in os.listdir('.') if f.startswith('2')])
-    
+    # Debug: Print the sorted files for verification
+    print("Files matching pattern '2xx':", sorted_files)
+
     # Append the content of the sorted files
     for idx, filename in enumerate(sorted_files):
         with open(filename, 'r') as file:
@@ -28,7 +33,7 @@ def replace_placeholders(spingest_section_name, total_ingest):
             file_content = file_content.replace('{spingest_section_name}', spingest_section_name)
             file_content = file_content.replace('MINE0', f'MINE{idx}')
             output_content += '\n' + file_content
-    
+
     # Write to the output file
     with open('simplified_output.txt', 'w') as output_file:
         output_file.write(output_content)
@@ -49,8 +54,12 @@ def replace_miner_placeholders(spminer_section_name, total_miner):
     # Combine the contents
     output_content = system_content + '\n' + template_content
     
-    # Sort the filenames that start with '3'
-    sorted_files = sorted([f for f in os.listdir('.') if f.startswith('3')])
+    # Sort the filenames that start with '3' followed by two digits and then any characters
+    pattern = re.compile(r'^3\d{2}.*')
+    sorted_files = sorted([f for f in os.listdir('.') if pattern.match(f)])
+    
+    # Debug: Print the sorted files for verification
+    print("Files matching pattern '3xx':", sorted_files)
     
     # Append the content of the sorted files
     for idx, filename in enumerate(sorted_files):
@@ -71,9 +80,10 @@ def replace_miner_placeholders(spminer_section_name, total_miner):
         output_file.write(output_content)
 
 def count_files_with_prefix(directory, prefix):
+    pattern = re.compile(r'^{}\d{{2}}.*'.format(prefix))
     count = 0
     for filename in os.listdir(directory):
-        if filename.startswith(prefix):
+        if pattern.match(filename):
             count += 1
     return count
 
